@@ -1,0 +1,33 @@
+function doGet(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  
+  // Get all parameters
+  var angle = e.parameter.angle;
+  var wavelength = e.parameter.wavelength;
+  var ldr = e.parameter.ldr;
+  var contamination = e.parameter.contamination;
+  
+  // Create timestamp
+  var timestamp = new Date();
+  
+  // Insert new row at POSITION 2 (below headers) instead of appending
+  sheet.insertRowBefore(2);
+  var range = sheet.getRange(2, 1, 1, 5);
+  
+  // Set values in EXACT order:
+  // 1. Timestamp, 2. Angle, 3. Wavelength, 4. LDR value, 5. Contamination
+  range.setValues([[timestamp, angle, wavelength, ldr, contamination]]);
+  
+  // Return success message
+  return ContentService.createTextOutput(JSON.stringify({
+    "status": "success",
+    "message": "Data inserted at top",
+    "data": {
+      "timestamp": timestamp.toString(),
+      "angle": angle,
+      "wavelength": wavelength,
+      "ldr": ldr,
+      "contamination": contamination
+    }
+  })).setMimeType(ContentService.MimeType.JSON);
+}
